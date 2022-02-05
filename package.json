@@ -1,0 +1,14 @@
+{
+  "name": "ui5-tooling-types",
+  "version": "1.0.0",
+  "description": "Types for ui5 tooling",
+  "main": "",
+  "types": "index.d.ts",
+  "author": "todm",
+  "license": "MIT",
+  "dependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.14"
+  },
+  "devDependencies": {}
+}
