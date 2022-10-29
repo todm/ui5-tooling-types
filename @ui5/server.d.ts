@@ -1,6 +1,6 @@
 declare module '@ui5/server' {
     import { RequestHandler } from 'express';
-    import { AbstractReader } from '@ui5/fs';
+    import { AbstractReader, ReaderCollection, ReaderCollectionPrioritized } from '@ui5/fs';
 
     export {};
 
@@ -91,7 +91,7 @@ declare module '@ui5/server' {
     /**
      * Parameters
      */
-    export interface MiddlewareParameters<T extends JSONValue> {
+    export interface MiddlewareParameters<T extends JSONValue = any> {
         /**
          * Resource collections
          */
@@ -99,17 +99,17 @@ declare module '@ui5/server' {
             /**
              * Reader or Collection to read resources of the root project and its dependencies
              */
-            all: AbstractReader;
+            all: ReaderCollectionPrioritized;
 
             /**
              * Reader or Collection to read resources of the project the server is started in
              */
-            rootProject: AbstractReader;
+            rootProject: ReaderCollection;
 
             /**
              * Reader or Collection to read resources of the projects dependencies
              */
-            dependencies: AbstractReader;
+            dependencies: ReaderCollection;
         };
 
         /**
@@ -179,5 +179,5 @@ declare module '@ui5/server' {
         contentType: string;
     }
 
-    export type MiddlewareFunction<T> = (parameters: MiddlewareParameters<T>) => RequestHandler;
+    export type MiddlewareFunction<T = any> = (parameters: MiddlewareParameters<T>) => RequestHandler;
 }

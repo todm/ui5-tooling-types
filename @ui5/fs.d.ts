@@ -1,6 +1,5 @@
-import { Readable, Stream } from 'stream';
-
 declare module '@ui5/fs' {
+    import { Readable, Stream } from 'stream';
     import fs from 'fs';
 
     export {};
@@ -369,7 +368,7 @@ declare module '@ui5/fs' {
                 getVirtualBasePathPrefix?: (parameters: { project: object; virBasePath: object }) => string;
                 virtualReaders?: object;
             }
-        ): object;
+        ): { source: ReaderCollection; dependencies: ReaderCollection };
 
         /**
          * Creates a resource <code>ReaderWriter</code>.

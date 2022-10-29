@@ -1,4 +1,6 @@
 declare module '@ui5/builder' {
+    import { Resource, DuplexCollection, ReaderCollection } from '@ui5/fs';
+
     export {};
 
     /**
@@ -61,7 +63,7 @@ declare module '@ui5/builder' {
 
     type JSONValue = string | number | boolean | null | JSONValue[] | Record<string, JSONValue>;
 
-    export interface TaskParameters<T extends JSONValue> {
+    export interface TaskParameters<T extends JSONValue = any> {
         /**
          * A DuplexCollection to read and write Resources for the project that is currently being built
          */
@@ -160,5 +162,5 @@ declare module '@ui5/builder' {
         registerCleanupTask(callback: () => void | Promise<void>): void;
     }
 
-    export type TaskFunction<T> = (params: TaskParameters<T>) => Promise<undefined>;
+    export type TaskFunction<T = any> = (params: TaskParameters<T>) => Promise<void>;
 }

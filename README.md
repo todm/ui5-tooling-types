@@ -2,8 +2,9 @@
 
 Typescript definition for UI5 Tooling
 
-Includes Typings for
+Includes definitions for
 
+-   [ui5-cli](https://github.com/SAP/ui5-cli)
 -   [ui5-project](https://github.com/SAP/ui5-project)
 -   [ui5-server](https://github.com/SAP/ui5-server)
 -   [ui5-builder](https://github.com/SAP/ui5-builder)
