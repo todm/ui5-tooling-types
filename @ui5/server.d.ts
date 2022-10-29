@@ -1,16 +1,97 @@
 declare module '@ui5/server' {
-    import { Request, RequestHandler } from 'express';
+    import { RequestHandler } from 'express';
     import { AbstractReader } from '@ui5/fs';
 
+    export {};
+
     /**
-     * Configuration type akin to YAML/JSON value types
+     * server
      */
-    type ConfigType = string | number | boolean | null | ConfigType[] | Record<string, ConfigType>;
+    export namespace server {
+        /**
+         * Start a server for the given project (sub-)tree.
+         *
+         * @param tree A (sub-)tree
+         * @param options Options
+         * @param options.port Port to listen to
+         * @param options.changePortIfInUse If true, change the port if it is already in use
+         * @param options.h2 Whether HTTP/2 should be used - defaults to <code>http</code>
+         * @param options.key Path to private key to be used for https
+         * @param options.cert Path to certificate to be used for for https
+         * @param options.simpleIndex Use a simplified view for the server directory listing
+         * @param options.acceptRemoteConnections If true, listens to remote connections and not only to localhost connections
+         * @param options.sendSAPTargetCSP If set to <code>true</code> or an object, then the default (or configured) set of security policies that SAP and UI5 aim for (AKA 'target policies'), are send for any requested <code>*.html</code> file
+         * @param options.serveCSPReports Enable CSP reports serving for request url '/.ui5/csp/csp-reports.json'
+         * @returns Promise resolving once the server is listening. It resolves with an object containing the <code>port</code>, <code>h2</code>-flag and a <code>close</code> function, which can be used to stop the server.
+         */
+        export function serve(
+            tree: object,
+            options: {
+                port: number;
+                changePortIfInUse?: boolean;
+                h2?: boolean;
+                key?: boolen;
+                cert?: string;
+                simpleIndex?: boolean;
+                acceptRemoteConnections?: boolean;
+                sendSAPTargetCSP?:
+                    | boolean
+                    | {
+                          defaultPolicy?: string;
+                          defaultPolicyIsReportOnly?: string;
+                          defaultPolicy2?: string;
+                          defaultPolicy2IsReportOnly?: string;
+                          ignorePaths?: string[];
+                      };
+                simpleIndex?: boolean;
+                serveCSPReports?: boolean;
+            }
+        ): Promise<{ h2: boolean; port: number; close(callback: (err: any) => void): void }>;
+    }
+
+    /**
+     * sslUtil
+     */
+    export namespace sslUtil {
+        /**
+         * Creates a new SSL certificate or validates an existing one.
+         *
+         * @param keyPath Path to private key to be used for https. Defaults to <code>$HOME/.ui5/server/server.key</code>
+         * @param certPath Path to certificate to be used for for https. Defaults to <code>$HOME/.ui5/server/server.crt</codee>
+         * @returns Resolves with an sslObject containing <code>cert</code> and <code>key</code>
+         */
+        export function getSslCertificate(
+            keyPath?: string,
+            certPath?: string
+        ): Promise<{ key: string | Buffer; cert: string | Buffer }>;
+    }
+
+    export namespace middlewareRepository {
+        /**
+         * Get Middleware
+         *
+         * @param middlewareName The middleware name
+         * @returns The middleware
+         */
+        export function getMiddleware(middlewareName: string): MiddlewareFunction;
+
+        /**
+         * Add Middleware
+         *
+         * @param parameters Parameters
+         * @param parameters.name Middleware name
+         * @param parameters.specVersion Spec version
+         * @param middlewarePath middlewarePath
+         */
+        export function addMiddleware(parameters: { name: string; specVersion?: string; middlewarePath: string }): void;
+    }
+
+    type JSONValue = string | number | boolean | null | JSONValue[] | Record<string, JSONValue>;
 
     /**
      * Parameters
      */
-    export interface MiddlewareParameters {
+    export interface MiddlewareParameters<T extends JSONValue> {
         /**
          * Resource collections
          */
@@ -38,7 +119,7 @@ declare module '@ui5/server' {
             /**
              * Custom server middleware configuration if given in ui5.yaml
              */
-            configuration: ConfigType;
+            configuration: T;
         };
 
         /**
@@ -81,16 +162,6 @@ declare module '@ui5/server' {
         getMimeInfo(resourcePath: string): MimeInfo;
     }
 
-    /**
-     * Mime info
-     *
-     * @example
-     * const mimeInfo = {
-     *   "type": "text/html",
-     *   "charset": "utf-8",
-     *   "contentType": "text/html; charset=utf-8"
-     *  };
-     */
     interface MimeInfo {
         /**
          * Detected content-type for the given resource path
@@ -108,5 +179,5 @@ declare module '@ui5/server' {
         contentType: string;
     }
 
-    export type MiddlewareFunction = (params: MiddlewareParameters) => RequestHandler;
+    export type MiddlewareFunction<T> = (parameters: MiddlewareParameters<T>) => RequestHandler;
 }
